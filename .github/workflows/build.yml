@@ -28,6 +28,13 @@ jobs:
         with:
           gradle-version: 8.5
 
+      - name: Verify Project Structure
+        run: |
+          echo "=== Root directory ==="
+          ls -la
+          echo "=== App module directory ==="
+          ls -la app || echo "WARNING: app folder not found!"
+
       - name: Prepare Release Keystore
         run: |
           if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
@@ -51,7 +58,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD || 'moscow2024' }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS || 'codekon' }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || 'moscow2024' }}
-        run: gradle assembleRelease --stacktrace
+        run: gradle :app:assembleRelease --stacktrace
 
       - name: Build Release AAB (App Bundle)
         env:
@@ -59,7 +66,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD || 'moscow2024' }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS || 'codekon' }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || 'moscow2024' }}
-        run: gradle bundleRelease --stacktrace
+        run: gradle :app:bundleRelease --stacktrace
 
       - name: Prepare Artifacts
         run: |
